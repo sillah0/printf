@@ -13,7 +13,7 @@ int _printf(const char *format, ...)
 	va_list args;
 	int count = 0, i = 0, j = 0, _identifier = 0;
 	function_z list[] = {{"s", print_string}, {"c", print_char},
-		{"i", print_int}, {"d", print_int}, {"b", int_to_bin},{NULL, NULL}};
+		{"i", printi}, {"d", printi}, {"b", int_to_bin}, {NULL, NULL}};
 
 	/* CHECKS FOR NULL VALUE */
 	if (format == NULL)
