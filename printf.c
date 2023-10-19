@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "main.h"
+#include <stdarg.h>
 
 /**
  * _printf - printf function
@@ -7,46 +7,46 @@
  * Return: chars
  */
 
+
 int _printf(const char *format, ...)
 {
 	va_list args;
-	int count = 0;
+	int count = 0, i = 0, j = 0, _identifier = 0;
+	function_z list[] = {{"s", print_string}, {"c", print_char},
+		{"i", print_int}, {"d", print_int}, {"b", int_to_bin},{NULL, NULL}};
 
+	/* CHECKS FOR NULL VALUE */
+	if (format == NULL)
+		EXIT_FAILURE;
 	va_start(args, format);
-	while (*format)
+	while (format[i] != '\0')
 	{
-		if (*format == '%')
-		{
-			format ++;
-			if (*format == 'c')
-			{
-				int arg = va_arg(args, int);
-				putchar(arg);
-				count++;
-			}
-			else if (*format == 's')
-			{
-				char *arg = va_arg(args, char*);
-				while (*arg)
-				{
-					putchar(*arg);
-					arg++;
-					count++;
-				}
-			}
-			else if (*format == '%')
-			{
-				putchar('%');
-				count++;
-			}
-		}
+		if (format[i] != '%')
+			count += _putchar(format[i]);
 		else
 		{
-			putchar(*format);
-			count++;
-		}
-		format++;
-	}
+			i++, j = 0;
+			while (list[j].identifier)
+			{
+				if (*list[j].identifier == format[i])
+				{	count += list[j].print_function(args);
+					_identifier = 1;
+				} j++; }
+			if (_identifier)
+				_identifier = 0;
+			else
+			{
+				if (format[i] == '%')
+					count += _putchar(format[i]);
+				else if (!format[i])
+				{	count -= 1;
+					continue;
+				}
+				else
+				{
+					count += _putchar(format[i - 1]);
+					count += _putchar(format[i]);
+				}}} i++; }
 	va_end(args);
 	return (count);
 }
