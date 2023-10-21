@@ -1,86 +1,63 @@
-#include "main.h"
-<<<<<<< HEAD
-=======
+#include <stdio.h>
 #include <stdarg.h>
 
->>>>>>> 2be6350652bff17d975c8471b5504355e65d17c7
 /**
- * _printf - printf function
- * @format: the format
- * Return: chars
+ * _printf - Custom printf function
+ * @format: Format string containing format specifiers
+ * Return: Number of characters printed (excluding null byte)
  */
-<<<<<<< HEAD
 int _printf(const char *format, ...)
 {
 	va_list args;
 	int count = 0;
+	char c;
+	const char *str;
+
 	va_start(args, format);
 
-	while (*format)
-=======
-
-
-int _printf(const char *format, ...)
-{
-	va_list args;
-	int count = 0, i = 0, j = 0, _identifier = 0;
-	function_z list[] = {{"s", print_string}, {"c", print_char},
-		{"i", printi}, {"d", printi}, {"b", int_to_bin}, {NULL, NULL}};
-
-	/* CHECKS FOR NULL VALUE */
 	if (format == NULL)
-		EXIT_FAILURE;
-	va_start(args, format);
-	while (format[i] != '\0')
->>>>>>> 2be6350652bff17d975c8471b5504355e65d17c7
+		return (-1);
+	while (*format)
 	{
-		if (format[i] != '%')
-			count += _putchar(format[i]);
-		else
+		if (*format == '%' && *(format + 1))
 		{
-<<<<<<< HEAD
-			format++;
-			if (*format == 'c')
+			if (*(format + 1) == 'c')
 			{
-
-				int arg = va_arg(args, int);
-				putchar(arg);
-
+				c = (char)va_arg(args, int);
+				putchar(c);
 				count++;
 			}
-			else if (*format == 's')
+			else if (*(format + 1) == 's')
 			{
-
-				char *arg = va_arg(args, char*);
-				while (*arg)
+				str = va_arg(args, const char *);
+				if (str == NULL)
+					str = "(null)";
+				while (*str)
 				{
-					putchar(*arg);
-					arg++;
+					putchar(*str);
+					str++;
 					count++;
-=======
-			i++, j = 0;
-			while (list[j].identifier)
+				}
+			}
+			else if (*(format + 1) == '%')
 			{
-				if (*list[j].identifier == format[i])
-				{	count += list[j].print_function(args);
-					_identifier = 1;
-				} j++; }
-			if (_identifier)
-				_identifier = 0;
+				putchar('%');
+				count++;
+			}
 			else
 			{
-				if (format[i] == '%')
-					count += _putchar(format[i]);
-				else if (!format[i])
-				{	count -= 1;
-					continue;
->>>>>>> 2be6350652bff17d975c8471b5504355e65d17c7
-				}
-				else
-				{
-					count += _putchar(format[i - 1]);
-					count += _putchar(format[i]);
-				}}} i++; }
+				putchar(*format);
+				count++;
+			}
+			format += 2;
+		}
+		else
+		{
+			putchar(*format);
+			count++;
+			format++;
+		}
+	}
 	va_end(args);
 	return (count);
 }
