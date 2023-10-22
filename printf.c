@@ -1,52 +1,89 @@
-#include "main.h"
+#include <stdio.h>
 #include <stdarg.h>
+#include "main.h"
 
 /**
- * _printf - printf function
- * @format: the format
- * Return: chars
+ * _printf - Custom printf function that supports:
+ *			 %c, %s, %%, %d, and %i specifiers.
+ *
+ * @format: Format string containing specifiers.
+ * @...: Additional arguments based on the specifiers.
+ * Return: Number of characters printed (excluding the null byte).
  */
-
-
 int _printf(const char *format, ...)
 {
 	va_list args;
-	int count = 0, i = 0, j = 0, _identifier = 0;
-	function_z list[] = {{"s", print_string}, {"c", print_char},
-		{"i", printi}, {"d", printi}, {"b", int_to_bin}, {NULL, NULL}};
+	int count = 0;
+	int temp, digitCount;
 
-	/* CHECKS FOR NULL VALUE */
-	if (format == NULL)
-		EXIT_FAILURE;
 	va_start(args, format);
-	while (format[i] != '\0')
+
+	while (*format)
 	{
-		if (format[i] != '%')
-			count += _putchar(format[i]);
-		else
+	if (*format == '%' && (*(format + 1) == 'c' ||
+				*(format + 1) == 's' ||
+				*(format + 1) == '%' ||
+				*(format + 1) == 'd' ||
+				*(format + 1) == 'i'))
+	{
+		/**
+		 * Handle %c: char argument
+		 */
+	if (*(format + 1) == 'c')
+	{
+		int c = va_arg(args, int);
+
+		_putchar(c);
+		count++;
+	}
+		/**
+		 * Handle %s: string argument
+		 */
+	else if (*(format + 1) == 's')
+	{
+		char *str = va_arg(args, char *);
+
+		while (*str)
 		{
-			i++, j = 0;
-			while (list[j].identifier)
-			{
-				if (*list[j].identifier == format[i])
-				{	count += list[j].print_function(args);
-					_identifier = 1;
-				} j++; }
-			if (_identifier)
-				_identifier = 0;
-			else
-			{
-				if (format[i] == '%')
-					count += _putchar(format[i]);
-				else if (!format[i])
-				{	count -= 1;
-					continue;
-				}
-				else
-				{
-					count += _putchar(format[i - 1]);
-					count += _putchar(format[i]);
-				}}} i++; }
+			putchar(*str);
+			str++;
+			count++;
+		}
+	}
+		/**
+		 * Handle %%: percent sign
+		 */
+	else if (*(format + 1) == '%')
+	{
+		putchar('%');
+		count++;
+	}
+		/** Handle %d or %i: integer argument
+		 */
+	else if (*(format + 1) == 'd' || *(format + 1) == 'i')
+	{
+		int num = va_arg(args, int);
+		printf("%d", num);
+		/** Count the number of digits in the printed number
+		 */
+		temp = num;
+		digitCount = 0;
+		do
+		{
+			temp /= 10;
+			digitCount++;
+		}	while (temp != 0);
+		count += digitCount;
+	}
+		format += 2; /** Move format pointer past the specifier and continue parsing */
+	}
+	else
+	{
+		putchar(*format); /** Print non-format characters */
+		count++;
+		format++;
+	}
+	}
 	va_end(args);
 	return (count);
 }
