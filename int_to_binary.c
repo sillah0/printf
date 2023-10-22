@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * int_to_binary - turns unsined int to binary
+ * int_to_binary - turns unsigned int to binary
  * @num: unsigned int
  *
  * Return: 0 or 1
