@@ -1,89 +1,66 @@
-#include <stdio.h>
-#include <stdarg.h>
 #include "main.h"
 
+void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - Custom printf function that supports:
- *			 %c, %s, %%, %d, and %i specifiers.
- *
- * @format: Format string containing specifiers.
- * @...: Additional arguments based on the specifiers.
- * Return: Number of characters printed (excluding the null byte).
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
 int _printf(const char *format, ...)
 {
-	va_list args;
-	int count = 0;
-	int temp, digitCount;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-	va_start(args, format);
+	if (format == NULL)
+		return (-1);
 
-	while (*format)
-	{
-	if (*format == '%' && (*(format + 1) == 'c' ||
-				*(format + 1) == 's' ||
-				*(format + 1) == '%' ||
-				*(format + 1) == 'd' ||
-				*(format + 1) == 'i'))
-	{
-		/**
-		 * Handle %c: char argument
-		 */
-	if (*(format + 1) == 'c')
-	{
-		int c = va_arg(args, int);
+	va_start(list, format);
 
-		_putchar(c);
-		count++;
-	}
-		/**
-		 * Handle %s: string argument
-		 */
-	else if (*(format + 1) == 's')
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
-		char *str = va_arg(args, char *);
-
-		while (*str)
+		if (format[i] != '%')
 		{
-			putchar(*str);
-			str++;
-			count++;
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
 		}
 	}
-		/**
-		 * Handle %%: percent sign
-		 */
-	else if (*(format + 1) == '%')
-	{
-		putchar('%');
-		count++;
-	}
-		/** Handle %d or %i: integer argument
-		 */
-	else if (*(format + 1) == 'd' || *(format + 1) == 'i')
-	{
-		int num = va_arg(args, int);
-		printf("%d", num);
-		/** Count the number of digits in the printed number
-		 */
-		temp = num;
-		digitCount = 0;
-		do
-		{
-			temp /= 10;
-			digitCount++;
-		}	while (temp != 0);
-		count += digitCount;
-	}
-		format += 2; /** Move format pointer past the specifier and continue parsing */
-	}
-	else
-	{
-		putchar(*format); /** Print non-format characters */
-		count++;
-		format++;
-	}
-	}
-	va_end(args);
-	return (count);
+
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
+
+	return (printed_chars);
+}
+
+/**
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
 }
