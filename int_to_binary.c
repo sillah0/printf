@@ -14,7 +14,7 @@ int int_to_binary(int num)
 	if (num / 2)
 		count += int_to_binary(num / 2);
 
-	count += _putchar((num % 2) + '0');
+	count += putchar((num % 2) + '0');
 
 	return (count);
 }

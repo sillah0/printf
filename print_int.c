@@ -12,7 +12,7 @@ int print_int(int i)
 
 	if (i < 0)
 	{
-		count += _putchar('-');
+		count += putchar('-');
 		num = i * -1;
 	}
 	else
@@ -23,7 +23,7 @@ int print_int(int i)
 	if (num >= 10)
 		count += print_int(num / 10);
 
-	count += _putchar((num % 10) + '0');
+	count += putchar((num % 10) + '0');
 
 	return (count);
 }
